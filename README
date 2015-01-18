@@ -1,0 +1,13 @@
+This is a simple tool audio tool that outputs some audio files
+simultaneously at various positions in space.
+
+
+The main way I use that is to feed it some ambiance sounds (forest,
+waterstream, …) to make myself feel somewhere else (hence the name).
+
+
+This makes use of openal and libsndfile.
+
+The supported formats are those that libsndfile supports.
+
+This is licensed in GPLv2+.
