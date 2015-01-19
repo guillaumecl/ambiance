@@ -142,8 +142,11 @@ struct sound *load_sound(const char *name)
 
 	if (s->file_infos.channels == 1)
 		s->format = AL_FORMAT_MONO16;
-	else
+	else {
 		s->format = AL_FORMAT_STEREO16;
+		fprintf(stderr, "Warning: %s is stereo, 3D effects are not applied for this source.\n",
+			name);
+	}
 
 	alGenSources(1, &s->source);
 	if (alGetError() != AL_NO_ERROR)
