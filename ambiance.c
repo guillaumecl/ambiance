@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <string.h>
+#include <unistd.h>
 
 #include "openal.h"
 #include "log.h"
@@ -28,6 +29,7 @@ int main(int argc, char **argv)
 {
 	struct sound *sounds[MAX_SOUNDS];
 	int i;
+	int busy = 1;
 
 	if (argc <= 1) {
 		printf("Usage: ambiance sound1 [sound2...]\n");
@@ -44,6 +46,21 @@ int main(int argc, char **argv)
 	for (i = 1; i < argc && i < MAX_SOUNDS; ++i) {
 		log("Loading file %s…", argv[i]);
 		sounds[i-1] = load_sound(argv[i]);
+	}
+
+	play_sounds(sounds, MAX_SOUNDS);
+
+	while (1) {
+		busy = 1;
+		while (busy) {
+			busy = 0;
+
+			for (i = 0; i < MAX_SOUNDS; ++i) {
+				if (!queue_next(sounds[i]))
+					busy = 1;
+			}
+		}
+		usleep(20000);
 	}
 
 	log("Destroying…");

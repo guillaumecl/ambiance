@@ -30,4 +30,11 @@ void destroy_al();
 struct sound *load_sound(const char *file);
 void free_sound(struct sound *sound);
 
+void play_sounds(struct sound **sound, int max_sounds);
+
+void play_sound(struct sound *s);
+void pause_sound(struct sound *sound);
+
+int queue_next(struct sound *sound);
+
 #endif

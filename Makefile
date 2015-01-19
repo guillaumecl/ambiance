@@ -2,6 +2,6 @@ LIBS=sndfile openal
 
 NAME=ambiance
 
-CFLAGS=-DDEBUG -g
+#CFLAGS=-DDEBUG -g
 
 include Makefile.base
