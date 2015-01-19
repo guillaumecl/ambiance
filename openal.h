@@ -27,6 +27,10 @@ struct sound;
 int init_al();
 void destroy_al();
 
+void set_position(float x, float y, float z);
+void set_orientation(float angle);
+
+
 struct sound *load_sound(const char *file);
 void free_sound(struct sound *sound);
 

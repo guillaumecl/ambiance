@@ -50,7 +50,10 @@ int main(int argc, char **argv)
 
 	play_sounds(sounds, MAX_SOUNDS);
 
+	float angle = 0;
+
 	while (1) {
+		set_orientation(angle);
 		busy = 1;
 		while (busy) {
 			busy = 0;
@@ -61,6 +64,7 @@ int main(int argc, char **argv)
 			}
 		}
 		usleep(20000);
+		angle += 0.01;
 	}
 
 	log("Destroying…");

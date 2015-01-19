@@ -50,7 +50,6 @@ int init_al()
 {
 	ALCcontext* ctx;
 	ALCdevice* dev;
-	float direction_vect[6];
 
 	dev = alcOpenDevice(NULL);
 	if (!dev)
@@ -63,18 +62,25 @@ int init_al()
 	if (!alcMakeContextCurrent(ctx))
 		return 1;
 
-	alListener3f(AL_POSITION, 0, 0, 0);
+	return 0;
+}
 
-	direction_vect[0] = sin(0); //sin(angle)
+void set_position(float x, float y, float z)
+{
+	alListener3f(AL_POSITION, x, y, z);
+}
+
+void set_orientation(float angle)
+{
+	float direction_vect[6];
+	direction_vect[0] = sin(angle); //sin(angle)
 	direction_vect[1] = 0;
-	direction_vect[2] = cos(0); //cos(angle)
+	direction_vect[2] = cos(angle); //cos(angle)
 	direction_vect[3] = 0;
 	direction_vect[4] = 1;
 	direction_vect[5] = 0;
 
 	alListenerfv(AL_ORIENTATION, direction_vect);
-
-	return 0;
 }
 
 void destroy_al()
@@ -160,6 +166,12 @@ struct sound *load_sound(const char *name)
 		read_more(s, s->buffers[i]);
 
 	alSourceQueueBuffers(s->source, BUFFER_COUNT, s->buffers);
+	if (s->source == 1)
+		alSource3f(s->source, AL_POSITION, 5.0, 0.0, 5.0);
+	else
+		alSource3f(s->source, AL_POSITION, -5.0, 0, -5.0);
+
+	log("source: %d\n", s->source);
 
 	return s;
 err_free:
