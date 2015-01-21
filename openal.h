@@ -27,8 +27,8 @@ struct sound;
 int init_al();
 void destroy_al();
 
-void set_position(float x, float y, float z);
-void set_orientation(float angle);
+int set_position(float x, float y, float z);
+int set_orientation(float angle);
 
 
 struct sound *load_sound(const char *file);
@@ -40,5 +40,7 @@ void play_sound(struct sound *s);
 void pause_sound(struct sound *sound);
 
 int queue_next(struct sound *sound);
+
+int set_source_position(struct sound *s, float x, float y, float z);
 
 #endif

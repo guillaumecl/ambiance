@@ -22,14 +22,16 @@
 
 #include "openal.h"
 #include "log.h"
+#include "parser.h"
 
-#define MAX_SOUNDS 5
+#define MAX_SOUNDS 50
 
 int main(int argc, char **argv)
 {
 	struct sound *sounds[MAX_SOUNDS];
 	int i;
 	int busy = 1;
+	int count = 0;
 
 	if (argc <= 1) {
 		printf("Usage: ambiance sound1 [sound2...]\n");
@@ -45,20 +47,22 @@ int main(int argc, char **argv)
 
 	for (i = 1; i < argc && i < MAX_SOUNDS; ++i) {
 		log("Loading file %s…", argv[i]);
-		sounds[i-1] = load_sound(argv[i]);
+		sounds[count] = parse_line(argv[i]);
+		if (sounds[count])
+			++count;
 	}
 
-	play_sounds(sounds, MAX_SOUNDS);
+	play_sounds(sounds, count);
 
 	float angle = 0;
 
-	while (1) {
+	while (count) {
 		set_orientation(angle);
 		busy = 1;
 		while (busy) {
 			busy = 0;
 
-			for (i = 0; i < MAX_SOUNDS; ++i) {
+			for (i = 0; i < count; ++i) {
 				if (!queue_next(sounds[i]))
 					busy = 1;
 			}
@@ -68,8 +72,8 @@ int main(int argc, char **argv)
 	}
 
 	log("Destroying…");
-	for (i = 1; i < MAX_SOUNDS; ++i)
-		free_sound(sounds[i-1]);
+	for (i = 0; i < count; ++i)
+		free_sound(sounds[i]);
 
 	destroy_al();
 

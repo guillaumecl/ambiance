@@ -25,8 +25,7 @@
 #ifdef DEBUG
 # define log(format, ...) fprintf(stderr, format "\n", ##__VA_ARGS__)
 #else
-# define log(...)
-# define logf(...)
+# define log(...) do {} while(0)
 #endif
 
 

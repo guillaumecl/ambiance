@@ -65,12 +65,13 @@ int init_al()
 	return 0;
 }
 
-void set_position(float x, float y, float z)
+int set_position(float x, float y, float z)
 {
 	alListener3f(AL_POSITION, x, y, z);
+	return alGetError();
 }
 
-void set_orientation(float angle)
+int set_orientation(float angle)
 {
 	float direction_vect[6];
 	direction_vect[0] = sin(angle); //sin(angle)
@@ -81,6 +82,7 @@ void set_orientation(float angle)
 	direction_vect[5] = 0;
 
 	alListenerfv(AL_ORIENTATION, direction_vect);
+	return alGetError();
 }
 
 void destroy_al()
@@ -106,7 +108,7 @@ int read_more(struct sound *s, int buffer)
 		return 1;
 
 	alBufferData(buffer, s->format, samples,
-		read * sizeof(ALushort), s->sample_rate);
+		read * sizeof(*samples), s->sample_rate);
 	log("alBufferData on buffer %d source %d returns %d",
 		buffer, s->source, alGetError());
 
@@ -129,7 +131,7 @@ int queue_next(struct sound *s)
 
 	alSourceQueueBuffers(s->source, 1, &buffer);
 
-	return 0;
+	return alGetError() != AL_NO_ERROR;
 }
 
 struct sound *load_sound(const char *name)
@@ -144,7 +146,7 @@ struct sound *load_sound(const char *name)
 	s->nb_samples = s->file_infos.channels * s->file_infos.frames;
 	s->sample_rate = s->file_infos.samplerate;
 
-	log("Sample count: %ud", s->nb_samples);
+	log("Sample count: %u", s->nb_samples);
 
 	if (s->file_infos.channels == 1)
 		s->format = AL_FORMAT_MONO16;
@@ -166,16 +168,14 @@ struct sound *load_sound(const char *name)
 		read_more(s, s->buffers[i]);
 
 	alSourceQueueBuffers(s->source, BUFFER_COUNT, s->buffers);
-	if (s->source == 1)
-		alSource3f(s->source, AL_POSITION, 5.0, 0.0, 5.0);
-	else
-		alSource3f(s->source, AL_POSITION, -5.0, 0, -5.0);
-
+	if (alGetError() != AL_NO_ERROR)
+		goto err_free;
 	log("source: %d\n", s->source);
 
 	return s;
 err_free:
 	free_sound(s);
+	fprintf(stderr, "Cannot open file '%s'\n", name);
 	return NULL;
 }
 
@@ -216,4 +216,10 @@ void free_sound(struct sound *s)
 	alDeleteBuffers(BUFFER_COUNT, s->buffers);
 
 	free(s);
+}
+
+int set_source_position(struct sound *s, float x, float y, float z)
+{
+	alSource3f(s->source, AL_POSITION, x, y, z);
+	return alGetError();
 }
