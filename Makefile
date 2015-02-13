@@ -6,4 +6,4 @@ NAME=ambiance
 
 LDFLAGS=-lm
 
-include Makefile.base
+include base.mk
