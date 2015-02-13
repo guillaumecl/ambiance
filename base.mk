@@ -1,4 +1,4 @@
-BASE_DIR=$(shell pwd)
+BASE_DIR:=$(shell pwd)
 CFLAGS += -Wall -Wextra -Werror -O3 -I${BASE_DIR}
 LDFLAGS +=
 DESTDIR ?=
@@ -19,15 +19,15 @@ endif
 ifndef NAME
 $(error "The NAME variable needs to be defined.")
 else
-BIN=${BUILD_DIR}/${NAME}
+BIN:=${BUILD_DIR}/${NAME}
 endif
 
 
-SOURCES=${wildcard *.c */*.c}
-HEADERS=${wildcard *.h */*.h}
-OBJECTS=$(SOURCES:%.c=${BUILD_DIR}/%.o)
-DEPS=$(SOURCES:%.c=${BUILD_DIR}/%.d)
-BUILD_DEP=${BUILD_DIR}/phony
+SOURCES:=${wildcard *.c */*.c}
+HEADERS:=${wildcard *.h */*.h}
+OBJECTS:=$(SOURCES:%.c=${BUILD_DIR}/%.o)
+DEPS:=$(SOURCES:%.c=${BUILD_DIR}/%.d)
+BUILD_DEP:=${BUILD_DIR}/phony
 
 all: ${BIN}
 
