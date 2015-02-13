@@ -1,6 +1,9 @@
 BASE_DIR=$(shell pwd)
 CFLAGS += -Wall -Wextra -Werror -O3 -I${BASE_DIR}
 LDFLAGS +=
+DESTDIR ?=
+PREFIX ?= /usr
+INSTALL_DIR := ${DESTDIR}${PREFIX}
 
 BUILD_DIR=build
 
@@ -42,7 +45,7 @@ ${BUILD_DIR}/%.o:%.c ${BUILD_DEP}
 	@echo "Compiling $<…"
 	${V} ${CC} -MMD -o $@ -c $< ${CFLAGS}
 
-.PHONY: clean all
+.PHONY: clean all install
 
 clean:
 	${V} rm -rf ${BUILD_DIR}
