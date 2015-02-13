@@ -20,11 +20,16 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <basedir.h>
+#include <basedir_fs.h>
+
 #include "openal.h"
 #include "log.h"
 #include "parser.h"
 
 #define MAX_SOUNDS 50
+
+xdgHandle xdg;
 
 int main(int argc, char **argv)
 {
@@ -32,9 +37,22 @@ int main(int argc, char **argv)
 	int i;
 	int busy = 1;
 	int count = 0;
+	FILE *config;
 
-	if (argc <= 1) {
-		printf("Usage: ambiance sound1 [sound2...]\n");
+	(void)argc;
+	(void)argv;
+	if (!xdgInitHandle(&xdg)) {
+		perror("xdgInitHandle failed");
+		return 1;
+	}
+
+	config = xdgConfigOpen("ambiance/ambiance.conf", "r", &xdg);
+	if (!config) {
+		fprintf(stderr, "Cannot find a configuration file. \n\n"
+			"Please setup one either in :\n\n"
+			"\t* /etc/xdg/ambiance/ambiance or\n"
+			"\t* $XDG_CONFIG_DIR/ambiance/ambiance.conf "
+			"(which typically is located in ~/.config/ambiance/ambiance.conf)\n");
 		return 1;
 	}
 	if (init_al()) {
@@ -45,9 +63,8 @@ int main(int argc, char **argv)
 
 	memset(sounds, 0, sizeof(sounds));
 
-	for (i = 1; i < argc && i < MAX_SOUNDS; ++i) {
-		log("Loading file %s…", argv[i]);
-		sounds[count] = parse_line(argv[i]);
+	for (i = 1; i < MAX_SOUNDS; ++i) {
+		sounds[count] = parse(config);
 		if (sounds[count])
 			++count;
 	}
@@ -76,6 +93,8 @@ int main(int argc, char **argv)
 		free_sound(sounds[i]);
 
 	destroy_al();
+
+	xdgWipeHandle(&xdg);
 
 	return 0;
 }

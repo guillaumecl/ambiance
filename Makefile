@@ -1,4 +1,4 @@
-LIBS=sndfile openal
+LIBS=sndfile openal libxdg-basedir
 
 NAME=ambiance
 
