@@ -5,7 +5,7 @@ DESTDIR ?=
 PREFIX ?= /usr
 INSTALL_DIR := ${DESTDIR}${PREFIX}
 
-BUILD_DIR=build
+BUILD_DIR?=build
 
 ifdef LIBS
 CFLAGS += $(shell pkg-config ${LIBS} --cflags)
@@ -23,8 +23,8 @@ BIN:=${BUILD_DIR}/${NAME}
 endif
 
 
-SOURCES:=${wildcard *.c */*.c}
-HEADERS:=${wildcard *.h */*.h}
+SOURCES:=${wildcard *.c} ${foreach dir,$(SUBDIRS),${wildcard $(dir)/*.c}}
+HEADERS:=${wildcard *.c} ${foreach dir,$(SUBDIRS),${wildcard $(dir)/*.h}}
 OBJECTS:=$(SOURCES:%.c=${BUILD_DIR}/%.o)
 DEPS:=$(SOURCES:%.c=${BUILD_DIR}/%.d)
 BUILD_DEP:=${BUILD_DIR}/phony
@@ -33,7 +33,8 @@ all: ${BIN}
 
 # Create all the file hierarchy of folders in the build directory
 ${BUILD_DEP}:
-	${V} find -not -wholename '*/.git*' -not -wholename '*/${BUILD_DIR}*' -type d -exec mkdir -p ${BUILD_DIR}/{} \;
+	${V} mkdir -p ${BUILD_DIR}
+	${V} ${foreach dir,$(SUBDIRS),mkdir -p ${BUILD_DIR}/$(dir)}
 	${V} touch ${BUILD_DEP}
 
 ${BIN}: ${OBJECTS} ${BUILD_DEP}
