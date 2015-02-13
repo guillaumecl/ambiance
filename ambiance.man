@@ -1,0 +1,24 @@
+.\" Manpage for ambiance.
+.\" Contact gclement@baobob.org.in to correct errors or typos.
+.TH man 1 "13 Feb 2015" "1.0.0" "ambiance man page"
+.SH NAME
+ambiance \- Create a nice ambiance for your work environment
+.SH SYNOPSIS
+ambiance
+.SH DESCRIPTION
+ambiance is a simple audio tool used to recreate an ambiance using
+several sounds placed at various places in space.
+.SH OPTIONS
+ambiance currently does not take any option from the command line. Instead, it reads its input from $XDG_CONFIG_DIR/ambiance/ambiance.conf or /etc/xdg/ambiance/ambiance.conf, respectively.
+.SH CONFIGURATION FILE
+The configuration file has a simple format. Each line represents a source to be added or an action to be done.
+.TP
+.B O x y z file
+Adds the specified file at the (x, y, z) coordinates as an omnidirectional source.
+.TP
+.B D x y z x2 y2 z2 file
+Adds the specified file at the (x, y, z) coordinates, pointing to (x2, y2, z2) as an directional source (unhandled at the moment).
+.SH BUGS
+The list of bugs can be accessed at https://github.com/guillaumecl/ambiance/issues
+.SH AUTHOR
+Guillaume Clement (gclement@baobob.org)
