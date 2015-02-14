@@ -39,22 +39,31 @@ int main(int argc, char **argv)
 	int count = 0;
 	FILE *config;
 
-	(void)argc;
-	(void)argv;
-	if (!xdgInitHandle(&xdg)) {
-		perror("xdgInitHandle failed");
-		return 1;
+	if (argc > 1) {
+		config = fopen(argv[1], "r");
+		if (!config) {
+			fprintf(stderr, "%s: ", argv[1]);
+			perror("");
+			return 1;
+		}
+	} else {
+		if (!xdgInitHandle(&xdg)) {
+			perror("xdgInitHandle failed");
+			return 1;
+		}
+
+		config = xdgConfigOpen("ambiance/ambiance.conf", "r", &xdg);
+		if (!config) {
+			fprintf(stderr, "Cannot find a configuration file. \n\n"
+				"Please setup one either in :\n\n"
+				"\t* /etc/xdg/ambiance/ambiance or\n"
+				"\t* $XDG_CONFIG_DIR/ambiance/ambiance.conf "
+				"(which typically is located in ~/.config/ambiance/ambiance.conf)\n");
+			return 1;
+		}
+		xdgWipeHandle(&xdg);
 	}
 
-	config = xdgConfigOpen("ambiance/ambiance.conf", "r", &xdg);
-	if (!config) {
-		fprintf(stderr, "Cannot find a configuration file. \n\n"
-			"Please setup one either in :\n\n"
-			"\t* /etc/xdg/ambiance/ambiance or\n"
-			"\t* $XDG_CONFIG_DIR/ambiance/ambiance.conf "
-			"(which typically is located in ~/.config/ambiance/ambiance.conf)\n");
-		return 1;
-	}
 	if (init_al()) {
 		perror("init_al failed");
 		return 1;
@@ -94,7 +103,7 @@ int main(int argc, char **argv)
 
 	destroy_al();
 
-	xdgWipeHandle(&xdg);
+	fclose(config);
 
 	return 0;
 }

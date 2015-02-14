@@ -4,12 +4,12 @@
 .SH NAME
 ambiance \- Create a nice ambiance for your work environment
 .SH SYNOPSIS
-ambiance
+ambiance [file]
 .SH DESCRIPTION
 ambiance is a simple audio tool used to recreate an ambiance using
 several sounds placed at various places in space.
 .SH OPTIONS
-ambiance currently does not take any option from the command line. Instead, it reads its input from $XDG_CONFIG_DIR/ambiance/ambiance.conf or /etc/xdg/ambiance/ambiance.conf, respectively.
+ambiance needs a configuration file to work. If a file is provided on the command line, it is opened. Otherwise, ambiance reads its input from $XDG_CONFIG_DIR/ambiance/ambiance.conf or /etc/xdg/ambiance/ambiance.conf, respectively.
 .SH CONFIGURATION FILE
 The configuration file has a simple format. Each line represents a source to be added or an action to be done.
 .TP
