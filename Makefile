@@ -2,8 +2,6 @@ LIBS=sndfile openal libxdg-basedir
 
 NAME=ambiance
 
-#CFLAGS=-DDEBUG -g
-
 LDFLAGS=-lm
 
 include base.mk

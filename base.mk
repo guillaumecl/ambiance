@@ -12,6 +12,10 @@ CFLAGS += $(shell pkg-config ${LIBS} --cflags)
 LDFLAGS += $(shell pkg-config ${LIBS} --libs)
 endif
 
+ifdef DEBUG
+CFLAGS+=-DDEBUG -g
+endif
+
 ifndef VERBOSE
 	V=@
 endif
