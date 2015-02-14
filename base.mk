@@ -56,3 +56,4 @@ clean:
 	${V} rm -rf ${BUILD_DIR}
 
 -include ${DEPS}
+${foreach dir,$(SUBDIRS),${eval -include $(dir)/subdir.mk}}
