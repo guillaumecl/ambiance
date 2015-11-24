@@ -29,27 +29,19 @@
 
 #define MAX_SOUNDS 50
 
-xdgHandle xdg;
-
-int main(int argc, char **argv)
+static FILE *open_config(const char *f)
 {
-	struct sound *sounds[MAX_SOUNDS];
-	int i;
-	int busy = 1;
-	int count = 0;
-	FILE *config;
+	FILE *config = NULL;
+	xdgHandle xdg;
 
-	if (argc > 1) {
-		config = fopen(argv[1], "r");
-		if (!config) {
-			fprintf(stderr, "%s: ", argv[1]);
-			perror("");
-			return 1;
-		}
+	if (f) {
+		config = fopen(f, "r");
+		if (!config)
+			perror("open failed");
 	} else {
 		if (!xdgInitHandle(&xdg)) {
 			perror("xdgInitHandle failed");
-			return 1;
+			return NULL;
 		}
 
 		config = xdgConfigOpen("ambiance/ambiance.conf", "r", &xdg);
@@ -59,10 +51,23 @@ int main(int argc, char **argv)
 				"\t* /etc/xdg/ambiance/ambiance or\n"
 				"\t* $XDG_CONFIG_DIR/ambiance/ambiance.conf "
 				"(which typically is located in ~/.config/ambiance/ambiance.conf)\n");
-			return 1;
 		}
 		xdgWipeHandle(&xdg);
 	}
+	return config;
+}
+
+int main(int argc, char **argv)
+{
+	struct sound *sounds[MAX_SOUNDS];
+	int i;
+	int busy = 1;
+	int count = 0;
+	FILE *config;
+
+	config = open_config(argc > 1 ? argv[1] : NULL);
+	if (!config)
+		return 1;
 
 	if (init_al()) {
 		perror("init_al failed");
